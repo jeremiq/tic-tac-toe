@@ -1,8 +1,20 @@
 package com.jeremiq.tictactoe.game.players;
 
+import com.jeremiq.tictactoe.game.board.Board;
+import com.jeremiq.tictactoe.game.board.BoardMark;
 
-import com.jeremiq.tictactoe.game.Board;
+public abstract class Player {
+    private BoardMark mark;
 
-public interface Player {
-    int getMove(Board board);
+    public Player(BoardMark mark) {
+        this.mark = mark;
+    }
+
+    public BoardMark getMark() {
+        return mark;
+    }
+
+    ;
+
+    public abstract int getMove(Board board);
 }

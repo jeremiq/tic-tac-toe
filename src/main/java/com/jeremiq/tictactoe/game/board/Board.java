@@ -1,9 +1,9 @@
-package com.jeremiq.tictactoe.game;
+package com.jeremiq.tictactoe.game.board;
 
 
 import com.jeremiq.tictactoe.game.cell.Cell;
 import com.jeremiq.tictactoe.game.cell.CellCoordinates;
-import com.jeremiq.tictactoe.game.cell.CellState;
+import com.jeremiq.tictactoe.game.cell.CellOccupiedException;
 
 import java.util.Collection;
 import java.util.HashSet;
@@ -12,6 +12,8 @@ import java.util.stream.IntStream;
 public class Board {
     private static final String columnDelimiter = "|";
     private static final String rowDelimiter = "-----";
+    private static final String emptyCell = " ";
+
     private static final int rowCount = 3;
     private static final int columnCount = 3;
     Cell[][] cells = new Cell[rowCount][columnCount];
@@ -25,7 +27,7 @@ public class Board {
         Collection<CellCoordinates> freeCellCoordinates = new HashSet<>();
         for (int i = 0; i < rowCount; i++) {
             for (int j = 0; j < columnCount; j++) {
-                if (cells[i][j].getState() == CellState.EMPTY) {
+                if (cells[i][j].getState() == null) {
                     freeCellCoordinates.add(new CellCoordinates(i, j));
                 }
             }
@@ -33,15 +35,15 @@ public class Board {
         return freeCellCoordinates;
     }
 
-    Boolean hasWinner() {
+    public Boolean hasWinner() {
         return hasWinningColumn() || hasWinningRow() || hasWinningDiagonal();
     }
 
 
-    Boolean isFull() {
+    public Boolean isFull() {
         for (int i = 0; i < rowCount; i++) {
             for (int j = 0; j < columnCount; j++) {
-                if (cells[i][j].getState() == CellState.EMPTY)
+                if (cells[i][j].getState() == null)
                     return false;
             }
         }
@@ -50,7 +52,7 @@ public class Board {
 
     Boolean hasWinningRow() {
         return IntStream.range(0, rowCount)
-                .mapToObj(rowNumber -> (cells[rowNumber][0].getState() != CellState.EMPTY
+                .mapToObj(rowNumber -> (cells[rowNumber][0].getState() != null
                         && cells[rowNumber][0].getState() == cells[rowNumber][1].getState()
                         && cells[rowNumber][0].getState() == cells[rowNumber][2].getState())
                 )
@@ -59,7 +61,7 @@ public class Board {
 
     Boolean hasWinningColumn() {
         return IntStream.range(0, columnCount)
-                .mapToObj(columnNumber -> (cells[0][columnNumber].getState() != CellState.EMPTY
+                .mapToObj(columnNumber -> (cells[0][columnNumber].getState() != null
                         && cells[0][columnNumber].getState() == cells[1][columnNumber].getState()
                         && cells[0][columnNumber].getState() == cells[2][columnNumber].getState())
                 )
@@ -68,37 +70,31 @@ public class Board {
     }
 
     Boolean hasWinningDiagonal() {
-        Boolean primaryDiagonal = (cells[1][1].getState() != CellState.EMPTY &&
+        Boolean primaryDiagonal = (cells[1][1].getState() != null &&
                 cells[0][0].getState() == cells[1][1].getState() &&
                 cells[1][1].getState() == cells[2][2].getState());
-        Boolean antiDiagonal = (cells[1][1].getState() != CellState.EMPTY &&
+        Boolean antiDiagonal = (cells[1][1].getState() != null &&
                 cells[1][1].getState() == cells[2][0].getState() &&
                 cells[1][1].getState() == cells[0][2].getState());
         return primaryDiagonal || antiDiagonal;
     }
 
 
-    void setCell(int move, CellState cellState) throws InvalidMoveException {
+    public void setCell(int move, BoardMark boardMark) throws CellOccupiedException, InvalidMoveException {
         Cell cell = getCell(move, cells);
-        if (cell.isEmpty()) {
-            cell.setState(cellState);
-        } else {
-            throw new InvalidMoveException("Move " + move + " is invalid. Cell is already occupied.");
-        }
+        cell.setState(boardMark);
     }
-
 
     public int getMoveFromCoordinates(CellCoordinates coordinates) {
         int x = coordinates.getX();
         int y = coordinates.getY();
-        if (x == 0) {
-            return y + 1;
-        }
-        if (x == 1) {
-            return y + 4;
-        }
-        if (x == 2) {
-            return y + 7;
+        switch (x) {
+            case 0:
+                return y + 1;
+            case 1:
+                return y + 4;
+            case 2:
+                return y + 7;
         }
         return -1;
     }
@@ -108,6 +104,7 @@ public class Board {
         if (move < 1 || move > 9) {
             throw new InvalidMoveException("Move " + move + " is invalid. Moves must be between 1 and 9, inclusive.");
         }
+
         if (move >= 1 && move <= 3) {
             coordinates.setX(0);
             coordinates.setY(move - 1);
@@ -128,7 +125,7 @@ public class Board {
         return cells[coordinates.getX()][coordinates.getY()];
     }
 
-    void render() {
+    public void render() {
         for (int i = 0; i < rowCount; i++) {
             System.out.println();
             if (i > 0) {
@@ -138,7 +135,7 @@ public class Board {
                 if (j > 0) {
                     System.out.print(columnDelimiter);
                 }
-                cells[i][j].render();
+                System.out.print(cells[i][j].getState() == null ? emptyCell: cells[i][j].getState());
             }
         }
         System.out.println();

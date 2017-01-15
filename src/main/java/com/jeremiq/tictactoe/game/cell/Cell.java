@@ -1,38 +1,22 @@
 package com.jeremiq.tictactoe.game.cell;
 
+import com.jeremiq.tictactoe.game.board.BoardMark;
+
 public class Cell {
-    private static final String EMPTY = " ";
-    private  static final String X = "X";
-    private static final String O = "O";
-    private CellState state;
+    private BoardMark state;
 
-    public Cell() {
-        setState(CellState.EMPTY);
-    }
-
-    public CellState getState() {
+    public BoardMark getState() {
         return state;
     }
 
-    public void setState(CellState state) {
-        this.state = state;
-    }
-
-    public boolean isEmpty() {
-        return state == CellState.EMPTY;
-    }
-
-    public void render() {
-        switch (this.state) {
-            case EMPTY:
-                System.out.print(EMPTY);
-                break;
-            case X:
-                System.out.print(X);
-                break;
-            case O:
-                System.out.print(O);
-                break;
+    public void setState(BoardMark state) throws CellOccupiedException {
+        if (this.isEmpty()) {
+            this.state = state;
+        } else {
+            throw new CellOccupiedException("Cell is already occupied.");
         }
+    }
+    public boolean isEmpty() {
+        return state == null;
     }
 }

@@ -1,24 +1,37 @@
 package com.jeremiq.tictactoe.game.cell;
 
+import com.jeremiq.tictactoe.game.board.BoardMark;
+import com.jeremiq.tictactoe.game.board.InvalidMoveException;
+import org.junit.Before;
 import org.junit.Test;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+
+import static org.junit.Assert.*;
 
 public class CellTest {
-    Cell cell = new Cell();
+    Cell cell;
+    BoardMark X;
+    BoardMark O;
 
-    @Test
+    @Before
+    public void setUp() throws Exception {
+        cell = new Cell();
+        X = BoardMark.X;
+        O = BoardMark.O;
+    }
+
+    @Test(expected = CellOccupiedException.class)
     public void testStateChange() throws Exception {
-        CellState testState = CellState.X;
-        cell.setState(testState);
-        assertEquals(testState, cell.getState());
+        assertNotEquals(X, cell.getState());
+        cell.setState(X);
+        assertEquals(X, cell.getState());
+        cell.setState(O);
     }
 
     @Test
     public void testIsEmpty() throws Exception {
-        cell.setState(CellState.EMPTY);
         assertTrue(cell.isEmpty());
-
+        cell.setState(X);
+        assertFalse(cell.isEmpty());
     }
 
 }

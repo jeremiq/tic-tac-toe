@@ -1,12 +1,19 @@
 package com.jeremiq.tictactoe.game.players;
 
-import com.jeremiq.tictactoe.game.Board;
+import com.jeremiq.tictactoe.game.board.Board;
+import com.jeremiq.tictactoe.game.board.BoardMark;
 
+import java.io.InputStream;
 import java.util.Scanner;
 
 
-public class HumanPlayer implements Player {
-    Scanner scanner = new Scanner(System.in);
+public class HumanPlayer extends Player {
+    Scanner scanner;
+
+    public HumanPlayer(BoardMark mark, InputStream inputStream) {
+        super(mark);
+        this.scanner = new Scanner(inputStream);
+    }
 
     @Override
     public int getMove(Board board) {
@@ -34,7 +41,7 @@ public class HumanPlayer implements Player {
     }
 
     private void promptMove() {
-        System.out.print("\nEnter your next getMove (1-9): ");
+        System.out.print("\nEnter your next move (1-9): ");
     }
 
 }

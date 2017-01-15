@@ -1,12 +1,17 @@
 package com.jeremiq.tictactoe.game.players;
 
 
-import com.jeremiq.tictactoe.game.Board;
+import com.jeremiq.tictactoe.game.board.Board;
+import com.jeremiq.tictactoe.game.board.BoardMark;
 
 import java.util.Arrays;
 import java.util.Collections;
 
-public class RandomPlayer implements Player {
+public class RandomPlayer extends Player {
+
+    public RandomPlayer(BoardMark mark) {
+        super(mark);
+    }
 
     @Override
     public int getMove(Board board) {
@@ -17,8 +22,8 @@ public class RandomPlayer implements Player {
 
     Object[] getPossibleMoves(Board board) {
         return board.freeCellCoordinates()
-                    .stream()
-                    .map(coordinates ->  board.getMoveFromCoordinates(coordinates)).toArray();
+                .stream()
+                .map(coordinates -> board.getMoveFromCoordinates(coordinates)).toArray();
     }
 
 

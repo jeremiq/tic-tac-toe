@@ -1,11 +1,12 @@
 package com.jeremiq.tictactoe.game;
 
-import com.jeremiq.tictactoe.game.cell.CellState;
+import com.jeremiq.tictactoe.game.board.Board;
+import com.jeremiq.tictactoe.game.board.InvalidMoveException;
+import com.jeremiq.tictactoe.game.cell.CellOccupiedException;
 import com.jeremiq.tictactoe.game.players.Player;
 
 public class Game {
     GameState currentState = GameState.PLAYING;
-    CellState currentMark = CellState.X;
     Player player1;
     Player player2;
     Player currentPlayer;
@@ -18,22 +19,22 @@ public class Game {
         do {
             try {
                 playRound(board);
-            } catch (InvalidMoveException ime) {
-                System.out.println(ime.getMessage() + " Try again.");
-                }
+            } catch (InvalidMoveException | CellOccupiedException e) {
+                System.out.println(e.getMessage() + " Try again.");
+            }
         } while (currentState == GameState.PLAYING);
     }
 
-    private void playRound(Board board) throws InvalidMoveException {
+    private void playRound(Board board) throws InvalidMoveException, CellOccupiedException {
         board.render();
         int playerMove = currentPlayer.getMove(board);
-        board.setCell(playerMove, currentMark);
+        board.setCell(playerMove, currentPlayer.getMark());
         updateGameState(board);
     }
 
     private void updateGameState(Board board) {
         if (board.hasWinner()) {
-            System.out.println("\nPlayer " + currentMark + " has won.");
+            System.out.println("\nPlayer " + currentPlayer.getMark() + " has won.");
             board.render();
             currentState = GameState.WON;
         }
@@ -49,7 +50,6 @@ public class Game {
 
     private void swapPlayer() {
         currentPlayer = (currentPlayer == player1) ? player2 : player1;
-        currentMark = (currentMark == CellState.X) ? CellState.O : CellState.X;
     }
 
 
